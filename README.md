@@ -1,2 +1,2 @@
-# celio-telegram-bot
-Chatbot to Telegram
+# Celio - Bot do Telegram
+Projeto de chatbot para o Telegram da Clear CFTV
