@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-def ResetXiongmaiDate(cod):
+def ResetXiongmaiDate(cod,tipo):
 
         url = 'https://cctvwiki.com/en/xiongmai-tech-password-reset/'
 
@@ -15,14 +15,19 @@ def ResetXiongmaiDate(cod):
                 soup = BeautifulSoup(html, 'html.parser')
 
                 # Encontra o elemento <span> com id="KQ"
-                span_element = soup.find('span', {'id': 'KQ'})
+                span_element = soup.findAll('span', {'id': 'KQ'})
 
                 # Verifica se o elemento foi encontrado
                 if span_element:
                     # Obtém o texto dentro do elemento <span>
-                    senha = span_element.get_text()
-                    parts = senha.split("Time:")
-                    senha = parts[0]
+                    if tipo == 'date':
+                        senha = span_element[0].get_text()
+                        parts = senha.split("Time:")
+                        senha = parts[0]
+                    elif tipo == 'key':
+                        senha = span_element[1].get_text()
+                        parts = senha.split("Time:")
+                        senha = parts[0]
                     return senha
                 else:
                     senha = "Erro! tente novamente em alguns minutos..."
