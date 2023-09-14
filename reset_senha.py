@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
-import requests
+import requests, time
 
 def ResetXiongmaiDate(cod,tipo):
-
+        cont = 0
         url = 'https://cctvwiki.com/en/xiongmai-tech-password-reset/'
 
         data = {'txtCode': cod}
@@ -28,7 +28,16 @@ def ResetXiongmaiDate(cod,tipo):
                         senha = span_element[1].get_text()
                         parts = senha.split("Time:")
                         senha = parts[0]
-                    return senha
+                    
+                    if senha == 'Super Password: Wait 5s and try it again':
+                         time.sleep(6)
+                         ResetXiongmaiDate(cod,tipo)
+                         cont+=1
+                         if cont > 3:
+                            senha = 'Erro! tente novamente em alguns minutos...'
+                            return senha
+                    else:
+                        return senha
                 else:
                     senha = "Erro! tente novamente em alguns minutos..."
                     return senha

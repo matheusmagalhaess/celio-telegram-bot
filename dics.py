@@ -1,5 +1,8 @@
-from telegram import *
-from telegram.ext import *
+import telebot, logging
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+user_firstname = ''
+
 
 # Dicionários para organizar as opções de teclado e mensagens
 keyboard_options = {
@@ -24,12 +27,13 @@ keyboard_options = {
 
 # Dicionários para organizar as mensagens 
 messages = {
-    'start': "Olá, {user} 👋!\nMeu nome é Célio, sou o chatbot da Clear CFTV!\nPosso te ajudar em algumas coisas.",
+    'start': f"Olá, {user_firstname} 👋!\nMeu nome é Célio, sou o chatbot da Clear CFTV!\nPosso te ajudar em algumas coisas.",
     'suporte': "Perfeito, {user}! Qual vertical você precisa de suporte?",
     'cftv': "{user}, aqui vai algumas opções disponíveis:",
     'reset': "Atualmente, eu ainda só consigo fazer o reset de senha dos DVRs da linha Xmeye para a data de hoje...",
     'senha': "Aqui está 🫡! {senha}",
     'comercial': "Vejo que precisa de atendimento comercial, ligue: 35 3473-4000",
     'especialista': "Olá! Infelizmente não temos especialistas disponíveis no momento...",
-    'dvr': "Por qual método você deseja fazer seu reset de senha?"
+    'dvr': "Por qual método você deseja fazer seu reset de senha?",
+    'digite_data': "Digite a data que aparece em seu equipamento no formato AAAMMDD"
 }
