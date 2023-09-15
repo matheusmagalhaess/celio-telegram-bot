@@ -22,7 +22,7 @@ conversation_state = {} # Utilizado para rastrear se o usuário já inciou um at
 def start_message(message):
     chat_id = message.chat.id
     user_firstname = message.from_user.first_name
-    conversation_state[chat_id]='em andamento'
+    conversation_state[chat_id]='menu_start'
     msg = f"Olá, {user_firstname} 👋!\nMeu nome é Célio, sou o chatbot da Clear CFTV!\nPosso te ajudar em algumas coisas:"
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
@@ -37,13 +37,14 @@ def start_message(message):
 # Message Handlers - Suporte Técnico
 @bot.message_handler(func=lambda message: user_state.get(message.chat.id) == 'esperando_key')
 def handle_key(message):
+    conversation_state[chat_id]='resetando_senha'
     chat_id = message.chat.id
     user_input = message.text
     try:
         key = int(user_input)
         senha = ResetXiongmaiDate(key, 'key')
         bot.send_message(chat_id, f'Aqui está: {senha}')
-        bot.send_message(chat_id, 'Insira a senha acima no seu DVR respeitando as letras maiúsculas e minúsculas. Em seguida, aguarde. Após o procedimento, a senha será nula (em branco)')
+        bot.send_message(chat_id, 'Insira a senha acima no seu DVR. Em seguida, aguarde. Após o procedimento, a senha será nula (em branco)')
         bot.send_message(chat_id, 'Para reiniciar seu atendimento envie /voltar ou /start. Ou clique nos comandos dessa mensagem')
     except ValueError:
         bot.send_message(chat_id, 'Não foi possível entender o que você escreveu. Tente novamente clicando no botão "Reset de Senha" e verifique se digitou corretamente.')
@@ -108,7 +109,7 @@ def callback_comercial(call):
 # Callback Suporte Técnico 👇👇
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_suporte')
 def callback_suporte(call):
-    conversation_state[call.message.chat.id]='em andamento'
+    conversation_state[call.message.chat.id]='suporte'
     msg = "Vejo que você precisa de ajuda com nossos produtos.\nSelecione a vertical de produtos que precisa de suporte. 👇"
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
