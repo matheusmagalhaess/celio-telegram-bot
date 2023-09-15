@@ -163,3 +163,4 @@ cython_debug/
 # Arquivos do Projeto
 celio-teste.py
 config.txt
+dics.py
