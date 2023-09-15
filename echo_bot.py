@@ -67,12 +67,12 @@ def ajuda(message):
     custom_keyboard = [InlineKeyboardButton('Reset por data', callback_data='callback_reset_data'),
                       InlineKeyboardButton('Reset por código key', callback_data='callback_reset_key')]
     reply.add(custom_keyboard[0], custom_keyboard[1])
-    with open('media\cftv\imgs\key.png', 'rb') as photo:
+    with open('media/cftv/imgs/key.png', 'rb') as photo:
         bot.send_photo(chat_id, photo,'Se seu DVR tiver este símbolo -> ❓  então selecione a opção [Código Key]. Caso não tenha, selecione a opção [Reset por Data]', reply_markup=reply)
 
 # Message Handler Comercial
 @bot.message_handler(commands=['veicular'])
-def veicular(message):
+def veicular(message):  
     bot.send_message(message.chat.id, 'Aqui vai um [vídeo](https://www.youtube.com/watch?v=SqESxWL17bQ) para você conhecer mais sobre nossa linha veicular: ', parse_mode='Markdown')
     bot.send_message(message.chat.id, 'Para receber nosso Catálogo, me envie\n/catalogoveicular, ou clique no comando que eu envio para você... ')
     bot.send_message(message.chat.id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /voltar')
@@ -88,7 +88,7 @@ def catalogoveicular(message):
 @bot.message_handler(commands=['cftv','CFTV'])
 def cftv(message):
     bot.send_message(message.chat.id, 'Vou te encaminhar nosso catálogo de produtos para você conhecer nossas novidades...')
-    with open('media\cftv\docs\catalogo_cftv.pdf','rb') as catalogo_cftv:
+    with open('media/cftv/docs/catalogo_cftv.pdf','rb') as catalogo_cftv:
         bot.send_document(message.chat.id, catalogo_cftv, caption='Aqui está! Se tiver dúvidas, entre em contato com nossos consultores, será um prazer te ajudar...')
     bot.send_message(message.chat.id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /voltar')
  
