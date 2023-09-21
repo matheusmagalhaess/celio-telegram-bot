@@ -23,15 +23,18 @@ def start_message(message):
     chat_id = message.chat.id
     user_firstname = message.from_user.first_name
     conversation_state[chat_id]='menu_start'
-    msg = f"Olá, {user_firstname} 👋!\nMeu nome é Célio, sou o chatbot da Clear CFTV!\nPosso te ajudar em algumas coisas:"
+    msg = 'Olá! 👋 Eu sou o Célio, o chatbot da Clear CFTV. Posso te ajudar em algumas coisas, mas antes preciso que você aceite nossa política de privacidade que\
+pode ser encontrada [aqui](https://www.clearcftv.com.br/pol%C3%ADtica-de-privacidade)'
+
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
-    custom_keyboard = [InlineKeyboardButton('Atendimento Comercial', callback_data='callback_comercial'),
-                       InlineKeyboardButton('Suporte Técnico', callback_data='callback_suporte')]
+    custom_keyboard = [InlineKeyboardButton('Aceito', callback_data='callback_start'),
+                       InlineKeyboardButton('Não aceito', callback_data='callback_privacidade_negada')]
     
     markup.add(custom_keyboard[0], custom_keyboard[1])
 
-    bot.send_message(chat_id, msg, reply_markup=markup)
+    bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup)
+
 
 # Message Handlers - Respostas aos comandos
 @bot.message_handler(commands=['veicular'])
@@ -121,6 +124,31 @@ def sair(message):
 
 
 # Callback Query Handlers - Respostas aos botões
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_start')
+def callback_start(call):
+    chat_id = call.message.chat.id
+    msg = 'Obrigado! Agora, escolha que tipo de atendimento você deseja:'
+    markup = InlineKeyboardMarkup()
+    markup.row_width = 2
+    custom_keyboard = [InlineKeyboardButton('Atendimento Comercial', callback_data='callback_comercial'),
+                       InlineKeyboardButton('Suporte Técnico', callback_data='callback_suporte')]
+    
+    markup.add(custom_keyboard[0], custom_keyboard[1])
+
+    bot.send_message(chat_id, msg, reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_privacidade_negada')
+def callback_privacidade_negada(call):
+    chat_id = call.message.chat.id
+    msg = 'Lamento mas não posso dar sequência no seu atendimento sem que aceite nossos termos.'
+    msg2 = 'Espero poder te ajudar em breve 👋'
+    if chat_id in conversation_state:
+        del conversation_state[chat_id]
+    if chat_id in user_state:
+        del user_state[chat_id]
+    bot.send_message(chat_id, msg)
+    bot.send_message(chat_id, msg2)
+
 # Callback Comercial
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_comercial')
 def callback_comercial(call):
