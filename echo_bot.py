@@ -7,9 +7,17 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 with open('config.txt', "r") as config_file:
     TOKEN = config_file.read().strip()
 
-# Informações de log
-logger = telebot.logger
-telebot.logger.setLevel(logging.DEBUG)  # Outputs debug messages to console.
+# Configuração do formato de log
+log_format = '%(asctime)s [%(levelname)s] - %(message)s'
+logging.basicConfig(format=log_format, level=logging.DEBUG)
+
+# Exemplo de uso
+logging.debug('Isso é uma mensagem de depuração.')
+logging.info('Isso é uma mensagem de informação.')
+logging.warning('Isso é uma mensagem de aviso.')
+logging.error('Isso é uma mensagem de erro.')
+logging.critical('Isso é uma mensagem crítica.')
+
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -22,7 +30,7 @@ conversation_state = {} # Utilizado para rastrear se o usuário já inciou um at
 def start_message(message):
     chat_id = message.chat.id
     user_firstname = message.from_user.first_name
-    if conversation_state.get(chat_id) is None: # Aqui eu testo pra ver se ele já não passou por aqui quando ele usa o /inicio
+    if conversation_state.get(chat_id) is None or conversation_state.get(chat_id) == 'menu_start': # Aqui eu testo pra ver se ele já não passou por aqui quando ele usa o /inicio
         conversation_state[chat_id]='menu_start'
         msg = 'Olá! 👋 Eu sou o Célio, o chatbot da Clear CFTV. Posso te ajudar em algumas coisas, mas antes preciso que você aceite nossa política de privacidade que\
     pode ser encontrada [aqui](https://www.clearcftv.com.br/pol%C3%ADtica-de-privacidade)'
@@ -43,7 +51,6 @@ def start_message(message):
         markup.add(custom_keyboard[0])
         msg = 'Clique no botão para recomeçar ou envie /sair para encerrar o atendimento'
         bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup)
-
 
 
 # Message Handlers - Respostas aos comandos
@@ -191,8 +198,7 @@ def callback_suporte(call):
     markup.add(custom_keyboard[0], custom_keyboard[1])
 
     bot.send_message(chat_id, msg, reply_markup=markup)
-    msg2 = 'Se precisar retornar, digite /inicio para voltar.'
-    bot.send_message(chat_id, msg2)
+
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_veicular')
 def callback_veicular(call):
@@ -205,6 +211,7 @@ def callback_veicular(call):
     msg = 'Eu ainda estou aprendendo sobre este recurso 🤔... Não posso te ajudar com isso no momento mas você pode me pedir através do /especialista para\
 te encaminhar para nossos especialistas'
     bot.send_message(chat_id, msg, reply_markup=markup)
+    sair(call.message)
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_cftv')
 def callback_cftv(call):
@@ -256,6 +263,7 @@ def callback_reset_key(call):
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_duvidas_gerais')
 def callback_duvidas_gerais(call):
+    
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_duvidas_gerais'
     msg = 'Agora, preciso saber de qual produto estamos falando.'
@@ -295,7 +303,7 @@ def echo_message(message):
     chat_id = message.chat.id
     if conversation_state.get(chat_id) is None:
         bot.reply_to(message, 'Digite /start para começar')
-        conversation_state[chat_id] = "em_andamento"
+        conversation_state[chat_id] = "menu_start"
     elif conversation_state.get(chat_id) is not None:
         # Não faça nada quando a conversa está em andamento
         pass
