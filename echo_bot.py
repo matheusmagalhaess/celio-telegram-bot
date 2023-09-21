@@ -22,18 +22,28 @@ conversation_state = {} # Utilizado para rastrear se o usuário já inciou um at
 def start_message(message):
     chat_id = message.chat.id
     user_firstname = message.from_user.first_name
-    conversation_state[chat_id]='menu_start'
-    msg = 'Olá! 👋 Eu sou o Célio, o chatbot da Clear CFTV. Posso te ajudar em algumas coisas, mas antes preciso que você aceite nossa política de privacidade que\
-pode ser encontrada [aqui](https://www.clearcftv.com.br/pol%C3%ADtica-de-privacidade)'
+    if conversation_state.get(chat_id) is None: # Aqui eu testo pra ver se ele já não passou por aqui quando ele usa o /inicio
+        conversation_state[chat_id]='menu_start'
+        msg = 'Olá! 👋 Eu sou o Célio, o chatbot da Clear CFTV. Posso te ajudar em algumas coisas, mas antes preciso que você aceite nossa política de privacidade que\
+    pode ser encontrada [aqui](https://www.clearcftv.com.br/pol%C3%ADtica-de-privacidade)'
 
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    custom_keyboard = [InlineKeyboardButton('Aceito', callback_data='callback_start'),
-                       InlineKeyboardButton('Não aceito', callback_data='callback_privacidade_negada')]
-    
-    markup.add(custom_keyboard[0], custom_keyboard[1])
+        markup = InlineKeyboardMarkup()
+        markup.row_width = 2
+        custom_keyboard = [InlineKeyboardButton('Aceito', callback_data='callback_start'),
+                        InlineKeyboardButton('Não aceito', callback_data='callback_privacidade_negada')]
+        
+        markup.add(custom_keyboard[0], custom_keyboard[1])
 
-    bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup)
+        bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup)
+    else:
+        markup = InlineKeyboardMarkup()
+        markup.row_width = 1
+        custom_keyboard = [InlineKeyboardButton('Reiniciar atendimento', callback_data='callback_start')]
+        
+        markup.add(custom_keyboard[0])
+        msg = 'Clique no botão para recomeçar ou envie /sair para encerrar o atendimento'
+        bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup)
+
 
 
 # Message Handlers - Respostas aos comandos
