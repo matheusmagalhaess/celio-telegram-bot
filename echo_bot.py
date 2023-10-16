@@ -2,6 +2,7 @@ import telebot
 import logging
 from reset_senha import ResetXiongmaiDate
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+from cpf import cpf_check
 
 # Carregar o token a partir de um arquivo de configuração externo
 with open('config.txt', "r") as config_file:
@@ -77,6 +78,22 @@ def cftv(message):
     with open('media/cftv/docs/catalogo_cftv.pdf','rb') as catalogo_cftv:
         bot.send_document(chat_id, catalogo_cftv, caption='Aqui está! Se tiver dúvidas, entre em contato com nossos consultores, será um prazer te ajudar...')
     bot.send_message(chat_id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /inicio')
+
+@bot.message_handler(func=lambda message: user_state.get(message.chat.id) == 'esperando_cpf')
+def esperando_cpf(message):
+    chat_id = message.chat.id
+    user_input = message.text
+    user_firstname = message.from_user.first_name
+    
+    cpf = user_input
+    cpf = cpf_check(cpf)
+    if cpf is False:
+        bot.send_message(chat_id, 'cpf_check is False ')
+    else:
+        markup = InlineKeyboardMarkup()
+        button = InlineKeyboardButton('Continuar', callback_data='callback_reset_de_senha')
+        markup.add(button)
+        bot.send_message(chat_id,f'Ótimo, {user_firstname}! Clique no botão abaixo para continuar: ', reply_markup=markup)
 
 @bot.message_handler(func=lambda message: user_state.get(message.chat.id) == 'esperando_key')
 def handle_key(message):
@@ -218,23 +235,32 @@ def callback_cftv(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_cftv'
     reply = InlineKeyboardMarkup()
-    custom_keyboard = [InlineKeyboardButton('Reset de Senha', callback_data='callback_reset_de_senha'),
+    custom_keyboard = [InlineKeyboardButton('Reset de Senha', callback_data='callback_cpf'),
                       InlineKeyboardButton('Dúvidas Gerais', callback_data='callback_duvidas_gerais'),
                       InlineKeyboardButton('Voltar', callback_data='callback_suporte')]
     reply.add(custom_keyboard[0], custom_keyboard[1], custom_keyboard[2])
     msg = f'Perfeito! Aqui vão algumas opções disponíveis pra você:'
     bot.send_message(chat_id, msg, reply_markup=reply)
 
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_cpf')
+def callback_cpf(call):
+    chat_id = call.message.chat.id
+    msg = 'Digite seu CPF (Apenas Números)'
+    bot.send_message(chat_id, msg, parse_mode='Markdown')
+    user_state[chat_id] = 'esperando_cpf'
+    #esperando_cpf(call.message)
+
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_reset_de_senha')
-def callback_cftv(call):
+def callback_reset_de_senha(call):
+    chat_id = call.message.chat.id
     reply = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Reset por data', callback_data='callback_reset_data'),
                       InlineKeyboardButton('Reset por código key', callback_data='callback_reset_key')]
     reply.add(custom_keyboard[0], custom_keyboard[1])
-    msg = f'Perfeito! Atualmente, eu só consigo realizar o reset de senha dos DVRs da linha Xmeye. Caso seja o seu modelo, escolha o método de reset de senha 👇'
+    msg = f'Atualmente, eu só consigo realizar o reset de senha dos DVRs da linha Xmeye. Caso seja o seu modelo, escolha o método de reset de senha 👇'
     msg2 = 'Se não souber qual método usar, me mande um /ajuda ou clique no comando que eu te mostro...'
-    bot.send_message(call.message.chat.id, msg, reply_markup=reply)
-    bot.send_message(call.message.chat.id, msg2)
+    bot.send_message(chat_id, msg, reply_markup=reply)
+    bot.send_message(chat_id, msg2)
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_reset_data')
 def callback_reset_data(call):

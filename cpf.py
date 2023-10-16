@@ -69,7 +69,6 @@ def cpf_check(entrada):
                 digit2 = None
         # Retorna um booleano e o valor do digito 1
         return checkdigit2_status, digit2
-
     status_digito1, valor_digito1 = check_digito1(entrada)
     status_digito2, valor_digito2 = check_digito2(entrada)
 
