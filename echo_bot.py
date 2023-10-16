@@ -4,6 +4,9 @@ from reset_senha import ResetXiongmaiDate
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from cpf import cpf_check
 
+### ---------------------- SETUP -------------------------------------------### 
+
+
 # Carregar o token a partir de um arquivo de configuração externo
 with open('config.txt', "r") as config_file:
     TOKEN = config_file.read().strip()
@@ -26,7 +29,7 @@ bot = telebot.TeleBot(TOKEN)
 user_state = {} # Rastreia se o usuário já enviou a data ou código key no processo de reset de senha
 conversation_state = {} # Utilizado para rastrear se o usuário já inciou um atendimento ou não, se não iniciou, o message handler com message:True entra em ação
 
-# Start Point 
+### ---------------------- MESSAGE HANDLER START POINT -------------------------------------------### 
 @bot.message_handler(commands=['start', 'inicio'])
 def start_message(message):
     chat_id = message.chat.id
@@ -53,8 +56,7 @@ def start_message(message):
         msg = 'Clique no botão para recomeçar ou envie /sair para encerrar o atendimento'
         bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup)
 
-
-# Message Handlers - Respostas aos comandos
+### ---------------------- MESSAGE HANDLER COMERCIAL VEICULAR -------------------------------------------### 
 @bot.message_handler(commands=['veicular'])
 def veicular(message):  
     chat_id = message.chat.id
@@ -70,6 +72,8 @@ def catalogoveicular(message):
         bot.send_document(message.chat.id,catalogo_veicular, caption='Aqui está!')
     bot.send_message(message.chat.id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /inicio')
 
+### ---------------------- MESSAGE HANDLER COMERCIAL CFTV -------------------------------------------### 
+
 @bot.message_handler(commands=['cftv','CFTV'])
 def cftv(message):
     chat_id = message.chat.id
@@ -78,6 +82,8 @@ def cftv(message):
     with open('media/cftv/docs/catalogo_cftv.pdf','rb') as catalogo_cftv:
         bot.send_document(chat_id, catalogo_cftv, caption='Aqui está! Se tiver dúvidas, entre em contato com nossos consultores, será um prazer te ajudar...')
     bot.send_message(chat_id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /inicio')
+
+### ---------------------- MESSAGE HANDLER RESET DE SENHA -------------------------------------------### 
 
 @bot.message_handler(func=lambda message: user_state.get(message.chat.id) == 'esperando_cpf')
 def esperando_cpf(message):
@@ -128,6 +134,8 @@ def handle_data(message):
     
     del user_state[chat_id]  # Remova o estado do usuário após a conclusão
 
+### ---------------------- MESSAGE HANDLER COMANDOS GERAIS -------------------------------------------### 
+
 @bot.message_handler(commands =['especialista'])
 def especialista(message):
     chat_id = message.chat.id
@@ -157,8 +165,8 @@ def sair(message):
         del user_state[chat_id]
     bot.send_message(chat_id, f'Espero ter te ajudado! Até breve, {user_firstname} 👋')
 
+### ---------------------- CALLBACKS POLÍTICA DE PRIVACIDADE -------------------------------------------### 
 
-# Callback Query Handlers - Respostas aos botões
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_start')
 def callback_start(call):
     chat_id = call.message.chat.id
@@ -184,7 +192,7 @@ def callback_privacidade_negada(call):
     bot.send_message(chat_id, msg)
     bot.send_message(chat_id, msg2)
 
-# Callback Comercial
+### ---------------------- CALLBACK COMERCIAL ------------------------------------------------### 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_comercial')
 def callback_comercial(call):
     chat_id = call.message.chat.id
@@ -202,7 +210,7 @@ def callback_comercial(call):
     bot.send_message(chat_id, msg2)
 
 
-# Callback Suporte Técnico 👇👇
+### ---------------------- CALLBACK SUPORTE TÉCNICO -------------------------------------------### 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_suporte')
 def callback_suporte(call):
     chat_id = call.message.chat.id
@@ -217,6 +225,7 @@ def callback_suporte(call):
 
     bot.send_message(chat_id, msg, reply_markup=markup)
 
+### ---------------------- CALLBACKS SUPORTE -> VERTICAIS -------------------------------------------### 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_veicular')
 def callback_veicular(call):
@@ -242,6 +251,8 @@ def callback_cftv(call):
     reply.add(custom_keyboard[0], custom_keyboard[1], custom_keyboard[2])
     msg = f'Perfeito! Aqui vão algumas opções disponíveis pra você:'
     bot.send_message(chat_id, msg, reply_markup=reply)
+
+### ---------------------- CALLBACKS RESET DE SENHA -------------------------------------------### 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_cpf')
 def callback_cpf(call):
@@ -304,6 +315,8 @@ def callback_duvidas_gerais(call):
     markup.add(custom_keyboard[0], custom_keyboard[1], custom_keyboard[2], custom_keyboard[3])
     bot.send_message(chat_id, msg, reply_markup=markup)
 
+### ---------------------- CALLBACKS DVR ANALÓGICOS -------------------------------------------### 
+
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_duvida_dvr')
 def callback_duvida_dvr(call):
     chat_id = call.message.chat.id
@@ -322,9 +335,38 @@ def callback_duvida_dvr(call):
         bot.send_photo(chat_id, photo, msg2)
     bot.send_message(chat_id, msg3, reply_markup=markup)
 
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_produto_dvr')
+def callback_produto_dvr(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_produto_dvr'
+    msg = 'Lamento mas ainda não aprendi sobre este produto... Estou em constante desenvolvimento e logo poderei te ajudar com esse produto.\
+mas posso te encaminhar para nosso -> /especialista'
+    bot.send_message(chat_id, msg)
 
 
-#### echo message handler ####
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_produto_hvr')
+def callback_produto_hvr(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_produto_hvr'
+    msg = 'Aqui está uma sequência de vídeos que tenho comigo para te ajudar:\n\
+1 - [Adicionando um usuário](https://www.youtube.com/watch?v=zT2Y3gQq2Jk)\n\
+2 - [Acesso Remoto](https://www.youtube.com/watch?v=HxsZY7kpSUc)\n\
+3 - [Configurando Detecção de Movimento](https://www.youtube.com/watch?v=OMWv4yWe_pg)\n\
+Não achou o que procura? Fale conosco aqui -> /especialista'
+    msg2 = 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /incio'
+    bot.send_message(chat_id, msg, parse_mode='Markdown')
+    bot.send_message(chat_id, msg2)
+
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_produto_xvr')
+def callback_produto_xvr(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_produto_xvr'
+    msg = 'Lamento mas ainda não aprendi sobre este produto... Estou em constante desenvolvimento e logo poderei te ajudar com esse produto.\
+mas posso te encaminhar para nosso -> /especialista'
+    bot.send_message(chat_id, msg)
+
+### -------------------------------------ECHO MESSAGE HANDLER------------------------------------- ###
+
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
     chat_id = message.chat.id
