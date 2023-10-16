@@ -97,6 +97,7 @@ def esperando_cpf(message):
 
 @bot.message_handler(func=lambda message: user_state.get(message.chat.id) == 'esperando_key')
 def handle_key(message):
+    chat_id = message.chat.id
     conversation_state[chat_id]='resetando_senha'
     chat_id = message.chat.id
     user_input = message.text
