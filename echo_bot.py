@@ -61,7 +61,7 @@ def start_message(message):
 def veicular(message):  
     chat_id = message.chat.id
     conversation_state[chat_id]='comercial_veicular'
-    bot.send_message(message.chat.id, 'Aqui vai um [vídeo](https://www.youtube.com/watch?v=SqESxWL17bQ) para você conhecer mais sobre nossa linha veicular: ', parse_mode='Markdown', disable_web_page_preview= True)
+    bot.send_message(message.chat.id, 'Aqui vai um [vídeo](https://www.youtube.com/watch?v=SqESxWL17bQ) para você conhecer mais sobre nossa linha veicular: ', parse_mode='Markdown')
     bot.send_message(message.chat.id, 'Para receber nosso Catálogo, me envie\n/catalogoveicular, ou clique no comando que eu envio para você... ')
     bot.send_message(message.chat.id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /incio')
 
@@ -219,11 +219,12 @@ def callback_suporte(call):
     conversation_state[chat_id]='callback_suporte'
     msg = "Vejo que você precisa de ajuda com nossos produtos.\nSelecione a vertical de produtos que precisa de suporte. 👇"
     markup = InlineKeyboardMarkup()
-    markup.row_width = 2
+    markup.row_width = 3
     custom_keyboard = [InlineKeyboardButton('Veicular', callback_data='callback_veicular'),
-                       InlineKeyboardButton('CFTV', callback_data='callback_cftv')]
+                       InlineKeyboardButton('CFTV', callback_data='callback_cftv'),
+                       InlineKeyboardButton('Voltar ↩️', callback_data='callback_start')]
     
-    markup.add(custom_keyboard[0], custom_keyboard[1])
+    markup.add(custom_keyboard[0], custom_keyboard[1],custom_keyboard[2])
 
     bot.send_message(chat_id, msg, reply_markup=markup)
 
