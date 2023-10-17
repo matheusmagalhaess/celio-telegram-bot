@@ -263,10 +263,10 @@ def callback_cl14(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_cl14'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-4 - 📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-CL14GSD-f8bb461f91294d2f9816d99240f669af) para acessar a página de documentação completa do produto \n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-CL14GSD-f8bb461f91294d2f9816d99240f669af) para acessar a página de documentação completa do produto \n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
@@ -279,10 +279,10 @@ def callback_plus(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_plus'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-4 - 📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-PLUS-799387300af944d98a10dcbfea082c29) para acessar a página de documentação completa do produto \n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-PLUS-799387300af944d98a10dcbfea082c29) para acessar a página de documentação completa do produto \n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
@@ -295,10 +295,10 @@ def callback_max(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_max'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\n\
-4 - 📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-MAX-efa46e82a7d94a78acde07dca82eaf77?pvs=4) para acessar a página de documentação completa do produto!\n\n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\n\
+📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-MAX-efa46e82a7d94a78acde07dca82eaf77?pvs=4) para acessar a página de documentação completa do produto!\n\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Download do app de calibração', callback_data='callback_icalibration'),InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
@@ -316,11 +316,6 @@ Caso não saiba como instalar um aplicativo com a extensão .apk [clique aqui](h
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_max')]
     markup.add(custom_keyboard[0])
     bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
-
-
-
-
-
 
 ### ---------------------------------------- CALLBACK SUPORTE IVMS ----------------------------------###
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_ivms')
@@ -345,9 +340,9 @@ def callback_contador_pessoas(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_contador_pessoas'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
@@ -360,9 +355,9 @@ def callback_cam_ahd(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_cam_ahd'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
@@ -375,9 +370,9 @@ def callback_ipc_veicular(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_ipc_veicular'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
@@ -487,9 +482,8 @@ def callback_dvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_dvr'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+📲[Download App Acesso Remoto](https://play.google.com/store/apps/details?id=com.mobile.myeye&pcampaignid=web_share)\n\
+🌐[Configuração Básica de Rede]()\n\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
@@ -503,15 +497,14 @@ def callback_hvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_hvr'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Adicionando um usuário](https://www.youtube.com/watch?v=zT2Y3gQq2Jk)\n\
-2 - 🎥[Acesso Remoto](https://www.youtube.com/watch?v=HxsZY7kpSUc)\n\
-3 - 🎥[Configurando Detecção de Movimento](https://www.youtube.com/watch?v=OMWv4yWe_pg))\n\
+🎥[Adicionando um usuário](https://www.youtube.com/watch?v=zT2Y3gQq2Jk)\n\
+🎥[Acesso Remoto](https://www.youtube.com/watch?v=HxsZY7kpSUc)\n\
+🎥[Configurando Detecção de Movimento](https://www.youtube.com/watch?v=OMWv4yWe_pg))\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
     bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
-
 
 ### XVR
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_xvr')
@@ -519,9 +512,9 @@ def callback_xvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_xvr'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
@@ -536,9 +529,9 @@ def callback_cam_analog(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_cam_analog'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
@@ -553,15 +546,14 @@ def callback_nvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_nvr'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
     bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
-
 
 ### ---------------------- CALLBACKS IPC -----------------------------------------------------### 
 
@@ -570,15 +562,12 @@ def callback_ipc_cftv(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_ipc_cftv'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+💻[Software para encontrar câmera na rede (Opção 1)](https://drive.google.com/file/d/1T--VmNSxp3PYGYI3Ar-q4zleAvnQFLpj/view?usp=sharing)\n\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
     bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
-
 
 ### --------------------- ECHO MESSAGE HANDLER----------------------------------------------- ###
 
