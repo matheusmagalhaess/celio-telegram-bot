@@ -343,7 +343,6 @@ def callback_produto_dvr(call):
 mas posso te encaminhar para nosso -> /especialista'
     bot.send_message(chat_id, msg)
 
-
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_produto_hvr')
 def callback_produto_hvr(call):
     chat_id = call.message.chat.id
@@ -365,7 +364,19 @@ def callback_produto_xvr(call):
 mas posso te encaminhar para nosso -> /especialista'
     bot.send_message(chat_id, msg)
 
-### -------------------------------------ECHO MESSAGE HANDLER------------------------------------- ###
+### ---------------------- CALLBACKS CAM ANALÓGICA -------------------------------------------### 
+
+...
+
+### ---------------------- CALLBACKS NVR -----------------------------------------------------### 
+
+...
+
+### ---------------------- CALLBACKS IPC -----------------------------------------------------### 
+
+...
+
+### --------------------- ECHO MESSAGE HANDLER----------------------------------------------- ###
 
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
