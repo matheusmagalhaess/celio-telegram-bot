@@ -296,13 +296,30 @@ def callback_max(call):
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-4 - 📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-MAX-efa46e82a7d94a78acde07dca82eaf77?pvs=4) para acessar a página de documentação completa do produto \n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\n\
+4 - 📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-MAX-efa46e82a7d94a78acde07dca82eaf77?pvs=4) para acessar a página de documentação completa do produto!\n\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
-    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
+    custom_keyboard = [InlineKeyboardButton('Download do app de calibração', callback_data='callback_icalibration'),InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
+    markup.max_row_keys=1
+    markup.add(custom_keyboard[0], custom_keyboard[1])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_icalibration')
+def callback_icalibration(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_icalibration'
+    msg=' [Clique aqui para fazer o download](https://drive.google.com/file/d/15HvPpvi7X-oQv4fXMHBm-eNPRypK1FVW/view?usp=sharing)\n\n\
+Caso não saiba como instalar um aplicativo com a extensão .apk [clique aqui](https://www.youtube.com/watch?v=b5D6zwkQKd4)'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_max')]
     markup.add(custom_keyboard[0])
     bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+
+
+
+
 
 ### ---------------------------------------- CALLBACK SUPORTE IVMS ----------------------------------###
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_ivms')
@@ -310,9 +327,11 @@ def callback_ivms(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_ivms'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
-1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
-3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+📲[Download App de Monitoramento](https://play.google.com/store/apps/details?id=com.icarvisions.iCarView&pcampaignid=web_share)\n\
+📁[Central de Downloads](https://www.clearcftv.com.br/downloads)\n\
+🎥[Treinamento Gestão de Frotas - App iCarview](https://youtube.com/playlist?list=PLERfymRp0uqk23J9l9fOsNLG0WAu5yMVa&si=k99OgarTRs4bjspe)\n\
+🎥[Treinamento Gestão de Frotas com IVMS Client](https://youtube.com/playlist?list=PLERfymRp0uqlTObi_hJAvS3030DkRZFNW&si=MRDwHFn6mESc3kdf)\n\
+📄\n\n\
 Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
