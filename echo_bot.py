@@ -46,7 +46,7 @@ def start_message(message):
         
         markup.add(custom_keyboard[0], custom_keyboard[1])
 
-        bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup)
+        bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup, disable_web_page_preview= True)
     else:
         markup = InlineKeyboardMarkup()
         markup.row_width = 1
@@ -54,14 +54,14 @@ def start_message(message):
         
         markup.add(custom_keyboard[0])
         msg = 'Clique no botão para recomeçar ou envie /sair para encerrar o atendimento'
-        bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup)
+        bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup, disable_web_page_preview= True)
 
 ### ---------------------- MESSAGE HANDLER COMERCIAL VEICULAR -------------------------------------------### 
 @bot.message_handler(commands=['veicular'])
 def veicular(message):  
     chat_id = message.chat.id
     conversation_state[chat_id]='comercial_veicular'
-    bot.send_message(message.chat.id, 'Aqui vai um [vídeo](https://www.youtube.com/watch?v=SqESxWL17bQ) para você conhecer mais sobre nossa linha veicular: ', parse_mode='Markdown')
+    bot.send_message(message.chat.id, 'Aqui vai um [vídeo](https://www.youtube.com/watch?v=SqESxWL17bQ) para você conhecer mais sobre nossa linha veicular: ', parse_mode='Markdown', disable_web_page_preview= True)
     bot.send_message(message.chat.id, 'Para receber nosso Catálogo, me envie\n/catalogoveicular, ou clique no comando que eu envio para você... ')
     bot.send_message(message.chat.id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /incio')
 
@@ -145,7 +145,7 @@ def especialista(message):
     conversation_state[chat_id] = 'especialista'
     msg = 'No momento, você pode falar com um de nossos especialistas através do nosso WhatsApp oficial do Suporte Técnico clicando [aqui](wa.me/+553534734043).\nLembre-se que nossos especialistas estão disponíveis\
  de *segunda à sexta das 08:00 às 18:00*.'
-    bot.send_message(chat_id, msg, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, parse_mode='Markdown', disable_web_page_preview= True)
 
 @bot.message_handler(commands=['ajuda'])
 def ajuda(message):
@@ -210,7 +210,7 @@ def callback_comercial(call):
    
     bot.send_message(chat_id, msg, parse_mode='Markdown')
     msg2 = 'Se precisar retornar, digite /inicio para voltar.'
-    bot.send_message(chat_id, msg2)
+    bot.send_message(chat_id, msg2, disable_web_page_preview= True)
 
 ### ---------------------- CALLBACK SUPORTE TÉCNICO -------------------------------------------### 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_suporte')
@@ -286,7 +286,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 ### MAX - SENSOR DE FADIGA
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_max')
@@ -303,7 +303,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     custom_keyboard = [InlineKeyboardButton('Download do app de calibração', callback_data='callback_icalibration'),InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
     markup.max_row_keys=1
     markup.add(custom_keyboard[0], custom_keyboard[1])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_icalibration')
 def callback_icalibration(call):
@@ -314,7 +314,7 @@ Caso não saiba como instalar um aplicativo com a extensão .apk [clique aqui](h
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_max')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 
 
@@ -336,7 +336,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 ### ---------------------------------------- CALLBACK CONTADOR  ----------------------------------###
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_contador_pessoas')
@@ -351,7 +351,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 ### ---------------------------------------- CALLBACK CAM AHD  ----------------------------------###
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_cam_ahd')
@@ -366,7 +366,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 ### ---------------------------------------- CALLBACK CAM IPC VEICULAR  ----------------------------------###
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_ipc_veicular')
@@ -381,7 +381,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 ### ------------------------------------- SUPORTE CFTV ------------------------------------------- ### 
 
@@ -395,7 +395,7 @@ def callback_cftv(call):
                       InlineKeyboardButton('Voltar ↩️', callback_data='callback_suporte')]
     reply.add(custom_keyboard[0], custom_keyboard[1], custom_keyboard[2])
     msg = f'Perfeito! Aqui vão algumas opções disponíveis pra você:'
-    bot.send_message(chat_id, msg, reply_markup=reply)
+    bot.send_message(chat_id, msg, reply_markup=reply, disable_web_page_preview= True)
 
 ### ---------------------- CALLBACKS RESET DE SENHA -------------------------------------------### 
 
@@ -493,7 +493,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 
 ### HVR
@@ -509,7 +509,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 
 ### XVR
@@ -525,7 +525,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 
 ### ---------------------- CALLBACKS CAM ANALÓGICA -------------------------------------------### 
@@ -542,7 +542,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 
 ### ---------------------- CALLBACKS NVR -----------------------------------------------------### 
@@ -559,7 +559,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 
 ### ---------------------- CALLBACKS IPC -----------------------------------------------------### 
@@ -576,7 +576,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
     markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
     markup.add(custom_keyboard[0])
-    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown', disable_web_page_preview= True)
 
 
 ### --------------------- ECHO MESSAGE HANDLER----------------------------------------------- ###
