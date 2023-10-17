@@ -77,5 +77,5 @@ def cpf_check(entrada):
             return True
         else:
             return False
-    except(IndexError):
+    except(IndexError, ValueError):
         return False
