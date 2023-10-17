@@ -209,7 +209,6 @@ def callback_comercial(call):
     msg2 = 'Se precisar retornar, digite /inicio para voltar.'
     bot.send_message(chat_id, msg2)
 
-
 ### ---------------------- CALLBACK SUPORTE TÉCNICO -------------------------------------------### 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_suporte')
 def callback_suporte(call):
@@ -225,20 +224,144 @@ def callback_suporte(call):
 
     bot.send_message(chat_id, msg, reply_markup=markup)
 
-### ---------------------- CALLBACKS SUPORTE -> VERTICAIS -------------------------------------------### 
+### ----------------------------------- SUPORTE VEICULAR -----------------------------------------### 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_veicular')
 def callback_veicular(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_veicular'
     markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    custom_keyboard = [InlineKeyboardButton('Voltar', callback_data='callback_suporte')]
-    markup.add(custom_keyboard[0])
-    msg = 'Eu ainda estou aprendendo sobre este recurso 🤔... Não posso te ajudar com isso no momento mas você pode me pedir através do /especialista para\
-te encaminhar para nossos especialistas'
+    markup.row_width = 3
+    custom_keyboard = [InlineKeyboardButton('MDVR', callback_data='callback_mdvr'), InlineKeyboardButton('Software IVMS', callback_data='callback_ivms'),
+                       InlineKeyboardButton('Contador de Passageiros', callback_data='callback_contador_pessoas'), InlineKeyboardButton('Câmeras AHD', callback_data='callback_cam_ahd'),
+                       InlineKeyboardButton('Câmeras IP', callback_data='callback_cam_ipc_veicular'), InlineKeyboardButton('Voltar ↩️  ', callback_data='callback_suporte')]
+    markup.add(custom_keyboard[0],custom_keyboard[1],custom_keyboard[2],custom_keyboard[3],custom_keyboard[4],custom_keyboard[5])
+    msg = 'Sobre qual produto você precisa de ajuda?'
     bot.send_message(chat_id, msg, reply_markup=markup)
-    sair(call.message)
+    
+### ---------------------------------------- CALLBACK SUPORTE MDVR ----------------------------------###
+
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_mdvr')
+def callback_mdvr(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_mdvr'
+    markup = InlineKeyboardMarkup()
+    markup.row_width = 2
+    custom_keyboard = [InlineKeyboardButton('CL14GS', callback_data='callback_cl14'), InlineKeyboardButton('Plus', callback_data='callback_plus'), 
+                       InlineKeyboardButton('Max (Sensor de Fadiga)', callback_data='callback_max'),InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
+    markup.add(custom_keyboard[0],custom_keyboard[1],custom_keyboard[2], custom_keyboard[3])
+    msg = 'Entendido! Qual modelo de MDVR você precisa de suporte?'
+    bot.send_message(chat_id, msg, reply_markup=markup)
+
+### CL14
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_cl14')
+def callback_cl14(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_cl14'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+4 - 📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-CL14GSD-f8bb461f91294d2f9816d99240f669af) para acessar a página de documentação completa do produto \n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+### PLUS
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_plus')
+def callback_plus(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_plus'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+4 - 📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-PLUS-799387300af944d98a10dcbfea082c29) para acessar a página de documentação completa do produto \n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+### MAX - SENSOR DE FADIGA
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_max')
+def callback_max(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_max'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+4 - 📄[Clique aqui](https://futurae.notion.site/DVR-Veicular-MAX-efa46e82a7d94a78acde07dca82eaf77?pvs=4) para acessar a página de documentação completa do produto \n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_mdvr')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+### ---------------------------------------- CALLBACK SUPORTE IVMS ----------------------------------###
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_ivms')
+def callback_ivms(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_ivms'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+### ---------------------------------------- CALLBACK CONTADOR  ----------------------------------###
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_contador_pessoas')
+def callback_contador_pessoas(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_contador_pessoas'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+### ---------------------------------------- CALLBACK CAM AHD  ----------------------------------###
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_cam_ahd')
+def callback_cam_ahd(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_cam_ahd'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+### ---------------------------------------- CALLBACK CAM IPC VEICULAR  ----------------------------------###
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_ipc_veicular')
+def callback_ipc_veicular(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_ipc_veicular'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_veicular')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+### ------------------------------------- SUPORTE CFTV ------------------------------------------- ### 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_cftv')
 def callback_cftv(call):
@@ -247,7 +370,7 @@ def callback_cftv(call):
     reply = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Reset de Senha', callback_data='callback_cpf'),
                       InlineKeyboardButton('Dúvidas Gerais', callback_data='callback_duvidas_gerais'),
-                      InlineKeyboardButton('Voltar', callback_data='callback_suporte')]
+                      InlineKeyboardButton('Voltar ↩️', callback_data='callback_suporte')]
     reply.add(custom_keyboard[0], custom_keyboard[1], custom_keyboard[2])
     msg = f'Perfeito! Aqui vão algumas opções disponíveis pra você:'
     bot.send_message(chat_id, msg, reply_markup=reply)
@@ -308,15 +431,15 @@ def callback_duvidas_gerais(call):
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
     custom_keyboard = [InlineKeyboardButton('DVR', callback_data='callback_duvida_dvr'),
-                       InlineKeyboardButton('Câmeras Analógicas', callback_data='callback_duvida_cam_analog'),
-                       InlineKeyboardButton('NVR', callback_data='callback_duvida_nvr'),
-                       InlineKeyboardButton('Câmeras IP', callback_data='callback_duvida_ipc')]
+                       InlineKeyboardButton('Câmeras Analógicas', callback_data='callback_cam_analog'),
+                       InlineKeyboardButton('NVR', callback_data='callback_nvr'),
+                       InlineKeyboardButton('Câmeras IP', callback_data='callback_ipc_cftv')]
     
     markup.add(custom_keyboard[0], custom_keyboard[1], custom_keyboard[2], custom_keyboard[3])
     bot.send_message(chat_id, msg, reply_markup=markup)
 
 ### ---------------------- CALLBACKS DVR ANALÓGICOS -------------------------------------------### 
-
+### ESCOLHA QUAL DVR
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_duvida_dvr')
 def callback_duvida_dvr(call):
     chat_id = call.message.chat.id
@@ -326,55 +449,113 @@ def callback_duvida_dvr(call):
     msg3 = 'Escolha qual modelo é o seu. Se não encontrar, não se preocupe, você pode falar com nossos especialistas me enviando um /especialista a qualquer momento...'
     markup = InlineKeyboardMarkup()
     markup.row_width = 3
-    custom_keyboard = [InlineKeyboardButton('DVR', callback_data='callback_produto_dvr'),
-                       InlineKeyboardButton('HVR', callback_data='callback_produto_hvr'),
-                       InlineKeyboardButton('XVR', callback_data='callback_produto_xvr')]
+    custom_keyboard = [InlineKeyboardButton('DVR', callback_data='callback_dvr'),
+                       InlineKeyboardButton('HVR', callback_data='callback_hvr'),
+                       InlineKeyboardButton('XVR', callback_data='callback_xvr')]
     markup.add(custom_keyboard[0], custom_keyboard[1], custom_keyboard[2])
     bot.send_message(chat_id, msg)
     with open ('media/cftv/imgs/dvrs.png', 'rb') as photo:
         bot.send_photo(chat_id, photo, msg2)
     bot.send_message(chat_id, msg3, reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data == 'callback_produto_dvr')
-def callback_produto_dvr(call):
+### DVR
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_dvr')
+def callback_dvr(call):
     chat_id = call.message.chat.id
-    conversation_state[chat_id] = 'callback_produto_dvr'
-    msg = 'Lamento mas ainda não aprendi sobre este produto... Estou em constante desenvolvimento e logo poderei te ajudar com esse produto.\
-mas posso te encaminhar para nosso -> /especialista'
-    bot.send_message(chat_id, msg)
+    conversation_state[chat_id] = 'callback_dvr'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
 
-@bot.callback_query_handler(func=lambda call: call.data == 'callback_produto_hvr')
-def callback_produto_hvr(call):
-    chat_id = call.message.chat.id
-    conversation_state[chat_id] = 'callback_produto_hvr'
-    msg = 'Aqui está uma sequência de vídeos que tenho comigo para te ajudar:\n\
-1 - [Adicionando um usuário](https://www.youtube.com/watch?v=zT2Y3gQq2Jk)\n\
-2 - [Acesso Remoto](https://www.youtube.com/watch?v=HxsZY7kpSUc)\n\
-3 - [Configurando Detecção de Movimento](https://www.youtube.com/watch?v=OMWv4yWe_pg)\n\
-Não achou o que procura? Fale conosco aqui -> /especialista'
-    msg2 = 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /incio'
-    bot.send_message(chat_id, msg, parse_mode='Markdown')
-    bot.send_message(chat_id, msg2)
 
-@bot.callback_query_handler(func=lambda call: call.data == 'callback_produto_xvr')
-def callback_produto_xvr(call):
+### HVR
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_hvr')
+def callback_hvr(call):
     chat_id = call.message.chat.id
-    conversation_state[chat_id] = 'callback_produto_xvr'
-    msg = 'Lamento mas ainda não aprendi sobre este produto... Estou em constante desenvolvimento e logo poderei te ajudar com esse produto.\
-mas posso te encaminhar para nosso -> /especialista'
-    bot.send_message(chat_id, msg)
+    conversation_state[chat_id] = 'callback_hvr'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Adicionando um usuário](https://www.youtube.com/watch?v=zT2Y3gQq2Jk)\n\
+2 - 🎥[Acesso Remoto](https://www.youtube.com/watch?v=HxsZY7kpSUc)\n\
+3 - 🎥[Configurando Detecção de Movimento](https://www.youtube.com/watch?v=OMWv4yWe_pg))\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
+
+### XVR
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_xvr')
+def callback_xvr(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_xvr'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
 
 ### ---------------------- CALLBACKS CAM ANALÓGICA -------------------------------------------### 
 
-...
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_cam_analog')
+def callback_cam_analog(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_cam_analog'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
 
 ### ---------------------- CALLBACKS NVR -----------------------------------------------------### 
 
-...
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_nvr')
+def callback_nvr(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_nvr'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
 
 ### ---------------------- CALLBACKS IPC -----------------------------------------------------### 
 
-...
+@bot.callback_query_handler(func=lambda call: call.data == 'callback_ipc_cftv')
+def callback_ipc_cftv(call):
+    chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'callback_ipc_cftv'
+    msg = 'Aqui está algumas coisas que posso te ajudar:\n\
+1 - 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+2 - 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+3 - 🎥[Vídeo 3](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
+Se não encontrou o que procura, fale com nosso /especialista'
+    markup = InlineKeyboardMarkup()
+    custom_keyboard = [InlineKeyboardButton('Voltar ↩️', callback_data='callback_duvidas_gerais')]
+    markup.add(custom_keyboard[0])
+    bot.send_message(chat_id, msg, reply_markup=markup, parse_mode='Markdown')
+
 
 ### --------------------- ECHO MESSAGE HANDLER----------------------------------------------- ###
 
