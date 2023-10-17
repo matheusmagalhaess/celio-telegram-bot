@@ -94,7 +94,10 @@ def esperando_cpf(message):
     cpf = user_input
     cpf = cpf_check(cpf)
     if cpf is False:
-        bot.send_message(chat_id, 'cpf_check is False ')
+        markup = InlineKeyboardMarkup()
+        button = InlineKeyboardButton('Tentar novamente', callback_data='callback_cpf')
+        markup.add(button)
+        bot.send_message(chat_id, 'CPF inválido!', reply_markup= markup)
     else:
         markup = InlineKeyboardMarkup()
         button = InlineKeyboardButton('Continuar', callback_data='callback_reset_de_senha')
