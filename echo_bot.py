@@ -1,5 +1,7 @@
 import telebot
 import logging
+import time
+import threading
 from reset_senha import ResetXiongmaiDate
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from cpf import cpf_check
@@ -25,6 +27,8 @@ logging.critical('Isso é uma mensagem crítica.')
 
 bot = telebot.TeleBot(TOKEN)
 
+
+
 # Dicionário para armazenar o estado do usuário
 user_state = {} # Rastreia se o usuário já enviou a data ou código key no processo de reset de senha
 conversation_state = {} # Utilizado para rastrear se o usuário já inciou um atendimento ou não, se não iniciou, o message handler com message:True entra em ação
@@ -34,10 +38,16 @@ conversation_state = {} # Utilizado para rastrear se o usuário já inciou um at
 def start_message(message):
     chat_id = message.chat.id
     user_firstname = message.from_user.first_name
+    
+    # Iniciar a verificação de inatividade em segundo plano
+    thread = threading.Thread(target=verificar_inatividade_global)
+    thread.daemon = True
+    thread.start()
+        
     if conversation_state.get(chat_id) is None or conversation_state.get(chat_id) == 'menu_start': # Aqui eu testo pra ver se ele já não passou por aqui quando ele usa o /inicio
         conversation_state[chat_id]='menu_start'
-        msg = 'Olá! 👋 Eu sou o Célio, o chatbot da Clear CFTV. Posso te ajudar em algumas coisas, mas antes preciso que você aceite nossa política de privacidade que\
-    pode ser encontrada [aqui](https://www.clearcftv.com.br/pol%C3%ADtica-de-privacidade)'
+        msg = 'Olá! 👋 Eu sou o Tom, o chatbot da Clear CFTV. Posso te ajudar em algumas coisas, mas antes preciso que você aceite nossa política de privacidade que\
+ pode ser encontrada [aqui](https://www.clearcftv.com.br/pol%C3%ADtica-de-privacidade).'
 
         markup = InlineKeyboardMarkup()
         markup.row_width = 2
@@ -55,6 +65,19 @@ def start_message(message):
         markup.add(custom_keyboard[0])
         msg = 'Clique no botão para recomeçar ou envie /sair para encerrar o atendimento'
         bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup, disable_web_page_preview= True)
+
+
+
+# Função para verificar a inatividade global
+def verificar_inatividade_global(chat_id, state, timeout_minutes=1):
+    while True:
+        if chat_id in conversation_state and conversation_state[chat_id] == state:
+            # Se a conversa ainda estiver no mesmo estado, envie um comando /sair
+            bot.send_message(chat_id, "/sair")
+            break
+        time.sleep(timeout_minutes * 1)  # Verificar a cada x minutos
+
+
 
 ### ---------------------- MESSAGE HANDLER COMERCIAL VEICULAR -------------------------------------------### 
 @bot.message_handler(commands=['veicular'])
@@ -110,12 +133,19 @@ def handle_key(message):
     conversation_state[chat_id]='resetando_senha'
     chat_id = message.chat.id
     user_input = message.text
+    markup = InlineKeyboardMarkup()
+    markup.row_width = 1
+    custom_keyboard = [InlineKeyboardButton('Reiniciar atendimento', callback_data='callback_cftv')]
+    markup.add(custom_keyboard[0])
     try:
         key = int(user_input)
         senha = ResetXiongmaiDate(key, 'key')
-        bot.send_message(chat_id, f'Aqui está: {senha}')
-        bot.send_message(chat_id, 'Insira a senha acima no seu DVR. Em seguida, aguarde. Após o procedimento, a senha será nula (em branco)')
-        bot.send_message(chat_id, 'Para reiniciar seu atendimento envie /inicio ou /start. Ou clique nos comandos dessa mensagem')
+        if senha != 'Lamento, mas o servidor de reset de senha está indisponível no momento... Aguarde alguns minutos e tente novamente...':
+            bot.send_message(chat_id, f'Aqui está: {senha}')
+            bot.send_message(chat_id, 'Insira a senha acima no seu DVR. Em seguida, aguarde. Após o procedimento, a senha será nula (em branco)', reply_markup=markup)
+        else:
+            bot.send_message(chat_id, f'{senha}')
+
     except ValueError:
         bot.send_message(chat_id, 'Não foi possível entender o que você escreveu. Tente novamente clicando no botão "Reset de Senha" e verifique se digitou corretamente.')
 
@@ -125,13 +155,19 @@ def handle_key(message):
 def handle_data(message):
     chat_id = message.chat.id
     user_input = message.text
+    markup = InlineKeyboardMarkup()
+    markup.row_width = 1
+    custom_keyboard = [InlineKeyboardButton('Reiniciar atendimento', callback_data='callback_cftv')]
+    markup.add(custom_keyboard[0])
     try:
         data = int(user_input)
         senha = ResetXiongmaiDate(data, 'date')
-        bot.send_message(chat_id, f'Aqui está: {senha}')
-        bot.send_message(chat_id, 'Insira a senha acima no seu DVR respeitando as letras maiúsculas e minúsculas. Em seguida, aguarde. Após o procedimento, a senha será nula (em branco)')
-        bot.send_message(chat_id, 'Para reiniciar seu atendimento envie /inicio ou /start. Ou clique nos comandos dessa mensagem')
-
+        if senha != 'Lamento, mas o servidor de reset de senha está indisponível no momento... Aguarde alguns minutos e tente novamente...':
+            bot.send_message(chat_id, f'Aqui está: {senha}')
+            bot.send_message(chat_id, 'Insira a senha acima no seu DVR e lembre-se de respeitar letras maísuculas e minúsculas. Em seguida, aguarde. Após o procedimento, a senha será nula (em branco)', reply_markup=markup)
+            
+        else:
+            bot.send_message(chat_id, f'{senha}')
     except ValueError:
         bot.send_message(chat_id, 'Não foi possível entender o que você escreveu. Tente novamente clicando no botão "Reset de Senha" e verifique se digitou corretamente.')
     
@@ -577,6 +613,13 @@ def echo_message(message):
     if conversation_state.get(chat_id) is None:
         bot.reply_to(message, 'Digite /start para começar')
         conversation_state[chat_id] = "menu_start"
+
+        markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+        item1 = telebot.types.KeyboardButton("/start")
+        markup.row(item1)
+        bot.send_message(chat_id, reply_markup=markup)
+        
+
     elif conversation_state.get(chat_id) is not None:
         # Não faça nada quando a conversa está em andamento
         pass
