@@ -135,20 +135,22 @@ def handle_key(message):
     user_input = message.text
     markup = InlineKeyboardMarkup()
     markup.row_width = 1
-    custom_keyboard = [InlineKeyboardButton('Reiniciar atendimento', callback_data='callback_cftv')]
-    markup.add(custom_keyboard[0])
+    custom_keyboard = [InlineKeyboardButton('Reiniciar atendimento', callback_data='callback_cftv'), InlineKeyboardButton('Novo reset', callback_data='callback_reset_de_senha')]
+    markup.add(custom_keyboard[0], custom_keyboard[1])
     try:
         key = int(user_input)
         senha = ResetXiongmaiDate(key, 'key')
         if senha != 'Lamento, mas o servidor de reset de senha está indisponível no momento... Aguarde alguns minutos e tente novamente...':
             bot.send_message(chat_id, f'Aqui está: {senha}')
             bot.send_message(chat_id, 'Insira a senha acima no seu DVR. Em seguida, aguarde. Após o procedimento, a senha será nula (em branco)', reply_markup=markup)
+            bot.send_message(chat_id, 'Se desejar encerrar seu atendimento clique aqui 👉 /sair')
         else:
             bot.send_message(chat_id, f'{senha}')
+            bot.send_message(chat_id, 'Se desejar encerrar seu atendimento clique aqui 👉 /sair')
 
     except ValueError:
         bot.send_message(chat_id, 'Não foi possível entender o que você escreveu. Tente novamente clicando no botão "Reset de Senha" e verifique se digitou corretamente.')
-
+        bot.send_message(chat_id, 'Se desejar encerrar seu atendimento clique aqui 👉 /sair')
     user_state.pop(chat_id)  # Remova o estado do usuário após a conclusão
 
 @bot.message_handler(func=lambda message: user_state.get(message.chat.id) == 'esperando_data')
@@ -157,20 +159,21 @@ def handle_data(message):
     user_input = message.text
     markup = InlineKeyboardMarkup()
     markup.row_width = 1
-    custom_keyboard = [InlineKeyboardButton('Reiniciar atendimento', callback_data='callback_cftv')]
-    markup.add(custom_keyboard[0])
+    custom_keyboard = [InlineKeyboardButton('Reiniciar atendimento', callback_data='callback_cftv'), InlineKeyboardButton('Novo reset', callback_data='callback_reset_de_senha')]
+    markup.add(custom_keyboard[0], custom_keyboard[1])
     try:
         data = int(user_input)
         senha = ResetXiongmaiDate(data, 'date')
         if senha != 'Lamento, mas o servidor de reset de senha está indisponível no momento... Aguarde alguns minutos e tente novamente...':
             bot.send_message(chat_id, f'Aqui está: {senha}')
             bot.send_message(chat_id, 'Insira a senha acima no seu DVR e lembre-se de respeitar letras maísuculas e minúsculas. Em seguida, aguarde. Após o procedimento, a senha será nula (em branco)', reply_markup=markup)
-            
+            bot.send_message(chat_id, 'Se desejar encerrar seu atendimento clique aqui 👉 /sair')
         else:
             bot.send_message(chat_id, f'{senha}')
+            bot.send_message(chat_id, 'Se desejar encerrar seu atendimento clique aqui 👉 /sair')
     except ValueError:
         bot.send_message(chat_id, 'Não foi possível entender o que você escreveu. Tente novamente clicando no botão "Reset de Senha" e verifique se digitou corretamente.')
-    
+        bot.send_message(chat_id, 'Se desejar encerrar seu atendimento clique aqui 👉 /sair')
     del user_state[chat_id]  # Remova o estado do usuário após a conclusão
 
 ### ---------------------- MESSAGE HANDLER COMANDOS GERAIS -------------------------------------------### 
