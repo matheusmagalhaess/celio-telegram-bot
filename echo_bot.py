@@ -34,25 +34,6 @@ user_state = {} # Rastreia se o usuário já enviou a data ou código key no pro
 conversation_state = {} # Utilizado para rastrear se o usuário já inciou um atendimento ou não, se não iniciou, o message handler com message:True entra em ação
 
 
-# Função para verificar a inatividade
-def check_inactivity(func=lambda message: user_state.get(message.chat.id) == 'inativo'):
-    while True:
-        time.sleep(300)
-        for chat_id, current_state in conversation_state.items():
-            if current_state:
-                if conversation_state.get(chat_id) == current_state:
-                    # O estado não mudou, considere o usuário como inativo
-                    logging.debug(f'Usuário {chat_id} inativo. Enviando comando /sair...')
-                    # Acione o comando /sair automaticamente
-                    user_state[chat_id] = 'inativo'
-                    bot.send_message(chat_id,'Como não houve mais interação, estou encerrando nosso atendimento. Se precisar, pode me chamar quantas vezes quiser! 👋')
-                    if chat_id in conversation_state:
-                        del conversation_state[chat_id]
-                    if chat_id in user_state:
-                        del user_state[chat_id]
-                    
-# Iniciar a verificação de inatividade em segundo plano
-threading.Thread(target=check_inactivity).start()        
 
 ### ---------------------- MESSAGE HANDLER START POINT -------------------------------------------### 
 @bot.message_handler(commands=['start', 'inicio'])
@@ -637,6 +618,25 @@ def echo_message(message):
         # Lidere com mensagens quando a conversa não está em andamento
         pass
 
+# Função para verificar a inatividade
+def check_inactivity(func=lambda message: user_state.get(message.chat.id) == 'inativo'):
+    while True:
+        time.sleep(300)
+        for chat_id, current_state in conversation_state.items():
+            if current_state:
+                if conversation_state.get(chat_id) == current_state:
+                    # O estado não mudou, considere o usuário como inativo
+                    logging.debug(f'Usuário {chat_id} inativo. Enviando comando /sair...')
+                    # Acione o comando /sair automaticamente
+                    user_state[chat_id] = 'inativo'
+                    bot.send_message(chat_id,'Como não houve mais interação, estou encerrando nosso atendimento. Se precisar, pode me chamar quantas vezes quiser! 👋')
+                    if chat_id in conversation_state:
+                        del conversation_state[chat_id]
+                    if chat_id in user_state:
+                        del user_state[chat_id]
+                    
+# Iniciar a verificação de inatividade em segundo plano
+threading.Thread(target=check_inactivity).start()        
 
 bot.infinity_polling()
 
