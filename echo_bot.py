@@ -33,17 +33,34 @@ bot = telebot.TeleBot(TOKEN)
 user_state = {} # Rastreia se o usuário já enviou a data ou código key no processo de reset de senha
 conversation_state = {} # Utilizado para rastrear se o usuário já inciou um atendimento ou não, se não iniciou, o message handler com message:True entra em ação
 
+
+# Função para verificar a inatividade
+def check_inactivity(func=lambda message: user_state.get(message.chat.id) == 'inativo'):
+    while True:
+        time.sleep(300)
+        for chat_id, current_state in conversation_state.items():
+            if current_state:
+                if conversation_state.get(chat_id) == current_state:
+                    # O estado não mudou, considere o usuário como inativo
+                    logging.debug(f'Usuário {chat_id} inativo. Enviando comando /sair...')
+                    # Acione o comando /sair automaticamente
+                    user_state[chat_id] = 'inativo'
+                    bot.send_message(chat_id,'Como não houve mais interação, estou encerrando nosso atendimento. Se precisar, pode me chamar quantas vezes quiser! 👋')
+                    if chat_id in conversation_state:
+                        del conversation_state[chat_id]
+                    if chat_id in user_state:
+                        del user_state[chat_id]
+                    
+# Iniciar a verificação de inatividade em segundo plano
+threading.Thread(target=check_inactivity).start()        
+
 ### ---------------------- MESSAGE HANDLER START POINT -------------------------------------------### 
 @bot.message_handler(commands=['start', 'inicio'])
 def start_message(message):
     chat_id = message.chat.id
     user_firstname = message.from_user.first_name
-    
-    # Iniciar a verificação de inatividade em segundo plano
-    thread = threading.Thread(target=verificar_inatividade_global)
-    thread.daemon = True
-    thread.start()
-        
+
+            
     if conversation_state.get(chat_id) is None or conversation_state.get(chat_id) == 'menu_start': # Aqui eu testo pra ver se ele já não passou por aqui quando ele usa o /inicio
         conversation_state[chat_id]='menu_start'
         msg = 'Olá! 👋 Eu sou o Tom, o chatbot da Clear CFTV. Posso te ajudar em algumas coisas, mas antes preciso que você aceite nossa política de privacidade que\
@@ -65,17 +82,6 @@ def start_message(message):
         markup.add(custom_keyboard[0])
         msg = 'Clique no botão para recomeçar ou envie /sair para encerrar o atendimento'
         bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup, disable_web_page_preview= True)
-
-
-
-# Função para verificar a inatividade global
-def verificar_inatividade_global(chat_id, state, timeout_minutes=1):
-    while True:
-        if chat_id in conversation_state and conversation_state[chat_id] == state:
-            # Se a conversa ainda estiver no mesmo estado, envie um comando /sair
-            bot.send_message(chat_id, "/sair")
-            break
-        time.sleep(timeout_minutes * 1)  # Verificar a cada x minutos
 
 
 
@@ -206,6 +212,7 @@ def sair(message):
     if chat_id in user_state:
         del user_state[chat_id]
     bot.send_message(chat_id, f'Espero ter te ajudado! Até breve, {user_firstname} 👋')
+
 
 ### ---------------------- CALLBACKS POLÍTICA DE PRIVACIDADE -------------------------------------------### 
 
