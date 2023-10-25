@@ -1,4 +1,4 @@
-# Celio - Chatbot da Clear CFTV
+# Chatbot da Clear CFTV
 
 O objetivo deste bot é auxiliar os clientes quando os nossos especialistas não estiverem disponíveis. 
 
