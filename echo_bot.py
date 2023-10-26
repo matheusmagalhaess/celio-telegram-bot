@@ -42,7 +42,7 @@ last_state = {}
 
 # Função para verificar a inatividade de um usuário
 def verificar_inatividade():
-    limite_inatividade = 10  # Tempo em segundos após o qual um usuário é considerado inativo
+    limite_inatividade = 300  # Tempo em segundos após o qual um usuário é considerado inativo
 
     while True:
         for chat_id, timestamp in list(last_state.items()):
@@ -55,7 +55,7 @@ def verificar_inatividade():
                     del user_state[chat_id]
                 del last_state[chat_id]
 
-        time.sleep(15)  # Verifique a inatividade a cada 15 segundos
+        time.sleep(310)  # Verifique a inatividade a cada 15 segundos
 
 
 ### ---------------------- MESSAGE HANDLER START POINT -------------------------------------------### 
