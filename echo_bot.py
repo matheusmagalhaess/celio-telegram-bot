@@ -131,15 +131,17 @@ def esperando_cpf(message):
     cpf = user_input
     cpf = cpf_check(cpf)
     if cpf is False:
-        markup = InlineKeyboardMarkup()
-        button = InlineKeyboardButton('Tentar novamente', callback_data='callback_cpf')
-        markup.add(button)
-        bot.send_message(chat_id, 'CPF inválido!', reply_markup= markup)
+        #markup = InlineKeyboardMarkup()
+        #button = InlineKeyboardButton('Tentar novamente', callback_data='callback_cpf')
+        #markup.add(button)
+        bot.send_message(chat_id, 'CPF inválido! Tente novamente! Lembre-se de me enviar somente números...')
+        #user_state.pop(chat_id)
     else:
         markup = InlineKeyboardMarkup()
         button = InlineKeyboardButton('Continuar', callback_data='callback_reset_de_senha')
         markup.add(button)
         bot.send_message(chat_id,f'Ótimo, {user_firstname}! Clique no botão abaixo para continuar: ', reply_markup=markup)
+        user_state.pop(chat_id)
 
 @bot.message_handler(func=lambda message: user_state.get(message.chat.id) == 'esperando_key')
 def handle_key(message):
@@ -208,12 +210,14 @@ def ajuda(message):
     chat_id = message.chat.id
     conversation_state[chat_id] = 'ajuda'
     last_state[chat_id] = time.time()
-    reply = InlineKeyboardMarkup()
+    markup = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Reset por data', callback_data='callback_reset_data'),
-                      InlineKeyboardButton('Reset por código key', callback_data='callback_reset_key')]
-    reply.add(custom_keyboard[0], custom_keyboard[1])
+                      InlineKeyboardButton('Reset por código key', callback_data='callback_reset_key'),
+                      InlineKeyboardButton('Voltar ↩️', callback_data='callback_cftv')]
+    markup.add(custom_keyboard[0], custom_keyboard[1], custom_keyboard[2])
+    markup.row_width  = 3
     with open('media/cftv/imgs/key.png', 'rb') as photo:
-        bot.send_photo(chat_id, photo,'Se seu DVR tiver este símbolo -> ❓  então selecione a opção [Código Key]. Caso não tenha, selecione a opção [Reset por Data]', reply_markup=reply)
+        bot.send_photo(chat_id, photo,'Se seu DVR tiver este símbolo -> ❓  então selecione a opção [Código Key]. Caso não tenha, selecione a opção [Reset por Data]', reply_markup=markup)
 
 @bot.message_handler(commands=['sair'])
 def sair(message):
