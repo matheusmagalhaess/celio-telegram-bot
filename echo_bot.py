@@ -656,8 +656,9 @@ Se não encontrou o que procura, fale com nosso /especialista'
 @bot.message_handler(func=lambda message: True)
 def echo_message(message):
     chat_id = message.chat.id
+    user_name = message.from_user.first_name 
     if conversation_state.get(chat_id) is None:
-        bot.reply_to(message, 'Digite /start para começar')
+        bot.reply_to(message, f'Olá {user_name}! Digite /start para começar seu atendimento!')
         conversation_state[chat_id] = "menu_start"
         last_state[chat_id] = time.time()
 
