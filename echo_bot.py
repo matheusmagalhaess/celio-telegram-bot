@@ -36,26 +36,29 @@ bot = telebot.TeleBot(TOKEN)
 # Dicionário para armazenar o estado do usuário
 user_state = {} # Rastreia se o usuário já enviou a data ou código key no processo de reset de senha
 conversation_state = {} # Utilizado para rastrear se o usuário já inciou um atendimento ou não, se não iniciou, o message handler com message:True entra em ação
-# Dicionário para rastrear a última interação de cada usuário
-last_state = {}
-
+last_state = {} # Dicionário para rastrear a última interação de cada usuário
 
 # Função para verificar a inatividade de um usuário
 def verificar_inatividade():
-    limite_inatividade = 300  # Tempo em segundos após o qual um usuário é considerado inativo
-
+    limite_inatividade1 = 300  # Tempo em segundos após o qual um usuário é considerado inativo
+    limite_inatividade2 = 600 
     while True:
-        for chat_id, timestamp in list(last_state.items()):
-            if time.time() - timestamp > limite_inatividade:
-                # O usuário está inativo, você pode fazer algo aqui, como enviar uma mensagem de lembrete
-                bot.send_message(chat_id, "Como não houve mais interação, estou encerrando nossa conversa. Você pode me chamar a qualquer momento se precisar! 😁👋")
+        for chat_id, timestamp in list(last_state.items()):# Primeira leitura
+            if time.time() - timestamp > limite_inatividade1: # Usuário inativo level 1
+                msg1 = 'Você ainda está aí?'
+                bot.send_message(chat_id, msg1)
+                time.sleep(30)
+        for chat_id, timestamp in list(last_state.items()):# Segunda leitura
+            if time.time() - timestamp > limite_inatividade2: # Usuário inativo level 2
+                msg2 ='Como não houve mais interação, estou encerrando nossa conversa. Você pode me chamar a qualquer momento se precisar! 😁👋'
+                bot.send_message(chat_id, msg2)
                 if chat_id in conversation_state:
                     del conversation_state[chat_id]
                 if chat_id in user_state:
                     del user_state[chat_id]
                 del last_state[chat_id]
 
-        time.sleep(310)  # Verifique a inatividade a cada 15 segundos
+        time.sleep(60s) # Verifica a cada 300 segundos se o usuário está inativo... 
 
 
 ### ---------------------- MESSAGE HANDLER START POINT -------------------------------------------### 
@@ -669,8 +672,6 @@ def echo_message(message):
     else:
         # Lidere com mensagens quando a conversa não está em andamento
         pass
-
-
 
 # Inicie a verificação de inatividade em segundo plano
 inatividade_thread = threading.Thread(target=verificar_inatividade)
