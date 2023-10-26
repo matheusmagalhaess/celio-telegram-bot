@@ -47,7 +47,7 @@ def verificar_inatividade():
             if time.time() - timestamp > limite_inatividade1: # Usuário inativo level 1
                 msg1 = 'Você ainda está aí?'
                 bot.send_message(chat_id, msg1)
-                time.sleep(30)
+                time.sleep(300)
         for chat_id, timestamp in list(last_state.items()):# Segunda leitura
             if time.time() - timestamp > limite_inatividade2: # Usuário inativo level 2
                 msg2 ='Como não houve mais interação, estou encerrando nossa conversa. Você pode me chamar a qualquer momento se precisar! 😁👋'
