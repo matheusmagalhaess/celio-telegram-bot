@@ -58,7 +58,7 @@ def verificar_inatividade():
                     del user_state[chat_id]
                 del last_state[chat_id]
 
-        time.sleep(60s) # Verifica a cada 300 segundos se o usuário está inativo... 
+        time.sleep(60) # Verifica a cada 300 segundos se o usuário está inativo... 
 
 
 ### ---------------------- MESSAGE HANDLER START POINT -------------------------------------------### 
