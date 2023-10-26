@@ -15,33 +15,55 @@ with open('config.txt', "r") as config_file:
 
 # Configuração do formato de log
 log_format = '%(asctime)s [%(levelname)s] - %(message)s'
-logging.basicConfig(format=log_format, level=logging.DEBUG)
+log_formatter = logging.Formatter(log_format)
 
-# Exemplo de uso
-logging.debug('Isso é uma mensagem de depuração.')
-logging.info('Isso é uma mensagem de informação.')
-logging.warning('Isso é uma mensagem de aviso.')
-logging.error('Isso é uma mensagem de erro.')
-logging.critical('Isso é uma mensagem crítica.')
+# Configuração do codificador
+log_handler = logging.StreamHandler()
+log_handler.setFormatter(log_formatter)
+
+# Configuração do nível de log
+log_level = logging.DEBUG
+
+# Configuração do logger
+logger = logging.getLogger()
+logger.setLevel(log_level)
+logger.addHandler(log_handler)
 
 
 bot = telebot.TeleBot(TOKEN)
 
 
-
 # Dicionário para armazenar o estado do usuário
 user_state = {} # Rastreia se o usuário já enviou a data ou código key no processo de reset de senha
 conversation_state = {} # Utilizado para rastrear se o usuário já inciou um atendimento ou não, se não iniciou, o message handler com message:True entra em ação
+# Dicionário para rastrear a última interação de cada usuário
+last_state = {}
 
+
+# Função para verificar a inatividade de um usuário
+def verificar_inatividade():
+    limite_inatividade = 10  # Tempo em segundos após o qual um usuário é considerado inativo
+
+    while True:
+        for chat_id, timestamp in list(last_state.items()):
+            if time.time() - timestamp > limite_inatividade:
+                # O usuário está inativo, você pode fazer algo aqui, como enviar uma mensagem de lembrete
+                bot.send_message(chat_id, "Como não houve mais interação, estou encerrando nossa conversa. Você pode me chamar a qualquer momento se precisar! 😁👋")
+                if chat_id in conversation_state:
+                    del conversation_state[chat_id]
+                if chat_id in user_state:
+                    del user_state[chat_id]
+                del last_state[chat_id]
+
+        time.sleep(15)  # Verifique a inatividade a cada 15 segundos
 
 
 ### ---------------------- MESSAGE HANDLER START POINT -------------------------------------------### 
 @bot.message_handler(commands=['start', 'inicio'])
 def start_message(message):
     chat_id = message.chat.id
-    user_firstname = message.from_user.first_name
-
-            
+    user_firstname = message.from_user.first_name     
+    last_state[chat_id] = time.time()   
     if conversation_state.get(chat_id) is None or conversation_state.get(chat_id) == 'menu_start': # Aqui eu testo pra ver se ele já não passou por aqui quando ele usa o /inicio
         conversation_state[chat_id]='menu_start'
         msg = 'Olá! 👋 Eu sou o Tom, o chatbot da Clear CFTV. Posso te ajudar em algumas coisas, mas antes preciso que você aceite nossa política de privacidade que\
@@ -64,30 +86,32 @@ def start_message(message):
         msg = 'Clique no botão para recomeçar ou envie /sair para encerrar o atendimento'
         bot.send_message(chat_id, msg, parse_mode='Markdown', reply_markup=markup, disable_web_page_preview= True)
 
-
-
 ### ---------------------- MESSAGE HANDLER COMERCIAL VEICULAR -------------------------------------------### 
 @bot.message_handler(commands=['veicular'])
 def veicular(message):  
     chat_id = message.chat.id
     conversation_state[chat_id]='comercial_veicular'
+    last_state[chat_id] = time.time()
     bot.send_message(message.chat.id, 'Aqui vai um [vídeo](https://www.youtube.com/watch?v=SqESxWL17bQ) para você conhecer mais sobre nossa linha veicular: ', parse_mode='Markdown')
     bot.send_message(message.chat.id, 'Para receber nosso Catálogo, me envie\n/catalogoveicular, ou clique no comando que eu envio para você... ')
     bot.send_message(message.chat.id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /incio')
 
 @bot.message_handler(commands=['catalogoveicular'])
-def catalogoveicular(message):    
+def catalogoveicular(message):  
+    chat_id = message.chat.id  
+    last_state[chat_id] = time.time()
     bot.send_message(message.chat.id, 'Ok! Um momento... ')
     with open('media/veicular/docs/CatalogoVeicular.pdf', 'rb') as catalogo_veicular:
         bot.send_document(message.chat.id,catalogo_veicular, caption='Aqui está!')
     bot.send_message(message.chat.id, 'Se desejar encerrar seu atendimento, digite /sair ou se quiser retornar ao início, digite /inicio')
-
+    
 ### ---------------------- MESSAGE HANDLER COMERCIAL CFTV -------------------------------------------### 
 
 @bot.message_handler(commands=['cftv','CFTV'])
 def cftv(message):
     chat_id = message.chat.id
     conversation_state[chat_id] = 'comercial_cftv'
+    last_state[chat_id] = time.time()
     bot.send_message(chat_id, 'Vou te encaminhar nosso catálogo de produtos para você conhecer nossas novidades...')
     with open('media/cftv/docs/catalogo_cftv.pdf','rb') as catalogo_cftv:
         bot.send_document(chat_id, catalogo_cftv, caption='Aqui está! Se tiver dúvidas, entre em contato com nossos consultores, será um prazer te ajudar...')
@@ -100,7 +124,7 @@ def esperando_cpf(message):
     chat_id = message.chat.id
     user_input = message.text
     user_firstname = message.from_user.first_name
-    
+    last_state[chat_id] = time.time()
     cpf = user_input
     cpf = cpf_check(cpf)
     if cpf is False:
@@ -118,6 +142,7 @@ def esperando_cpf(message):
 def handle_key(message):
     chat_id = message.chat.id
     conversation_state[chat_id]='resetando_senha'
+    last_state[chat_id] = time.time()
     chat_id = message.chat.id
     user_input = message.text
     markup = InlineKeyboardMarkup()
@@ -144,6 +169,7 @@ def handle_key(message):
 def handle_data(message):
     chat_id = message.chat.id
     user_input = message.text
+    last_state[chat_id] = time.time()
     markup = InlineKeyboardMarkup()
     markup.row_width = 1
     custom_keyboard = [InlineKeyboardButton('Reiniciar atendimento', callback_data='callback_cftv'), InlineKeyboardButton('Novo reset', callback_data='callback_reset_de_senha')]
@@ -169,6 +195,7 @@ def handle_data(message):
 def especialista(message):
     chat_id = message.chat.id
     conversation_state[chat_id] = 'especialista'
+    last_state[chat_id] = time.time()
     msg = 'No momento, você pode falar com um de nossos especialistas através do nosso WhatsApp oficial do Suporte Técnico clicando [aqui](wa.me/+553534734043).\nLembre-se que nossos especialistas estão disponíveis\
  de *segunda à sexta das 08:00 às 18:00*.'
     bot.send_message(chat_id, msg, parse_mode='Markdown', disable_web_page_preview= True)
@@ -177,6 +204,7 @@ def especialista(message):
 def ajuda(message):
     chat_id = message.chat.id
     conversation_state[chat_id] = 'ajuda'
+    last_state[chat_id] = time.time()
     reply = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Reset por data', callback_data='callback_reset_data'),
                       InlineKeyboardButton('Reset por código key', callback_data='callback_reset_key')]
@@ -187,6 +215,7 @@ def ajuda(message):
 @bot.message_handler(commands=['sair'])
 def sair(message):
     chat_id = message.chat.id
+    last_state[chat_id] = time.time()
     user_firstname = message.from_user.first_name  # Usar user_firstname em vez de user_first_name
     if chat_id in conversation_state:
         del conversation_state[chat_id]
@@ -194,12 +223,13 @@ def sair(message):
         del user_state[chat_id]
     bot.send_message(chat_id, f'Espero ter te ajudado! Até breve, {user_firstname} 👋')
 
-
 ### ---------------------- CALLBACKS POLÍTICA DE PRIVACIDADE -------------------------------------------### 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_start')
 def callback_start(call):
     chat_id = call.message.chat.id
+    conversation_state[chat_id] = 'privacidade_aceita'
+    last_state[chat_id] = time.time()
     msg = 'Obrigado! Agora, escolha que tipo de atendimento você deseja:'
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
@@ -213,6 +243,7 @@ def callback_start(call):
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_privacidade_negada')
 def callback_privacidade_negada(call):
     chat_id = call.message.chat.id
+    last_state[chat_id] = time.time()
     msg = 'Lamento mas não posso dar sequência no seu atendimento sem que aceite nossos termos.'
     msg2 = 'Espero poder te ajudar em breve 👋'
     if chat_id in conversation_state:
@@ -227,6 +258,7 @@ def callback_privacidade_negada(call):
 def callback_comercial(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_comercial'
+    last_state[chat_id] = time.time()
     user_firstname = call.from_user.first_name
     msg = f'{user_firstname}, aqui vai algumas opções que posso fazer por você:\n\n\
 ☎️ - Fale conosco: 3534734000\n\
@@ -238,12 +270,12 @@ def callback_comercial(call):
     bot.send_message(chat_id, msg, parse_mode='Markdown')
     msg2 = 'Se precisar retornar, digite /inicio para voltar.'
     bot.send_message(chat_id, msg2, disable_web_page_preview= True)
-
 ### ---------------------- CALLBACK SUPORTE TÉCNICO -------------------------------------------### 
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_suporte')
 def callback_suporte(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id]='callback_suporte'
+    last_state[chat_id] = time.time()
     msg = "Vejo que você precisa de ajuda com nossos produtos.\nSelecione a vertical de produtos que precisa de suporte. 👇"
     markup = InlineKeyboardMarkup()
     markup.row_width = 3
@@ -261,6 +293,7 @@ def callback_suporte(call):
 def callback_veicular(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_veicular'
+    last_state[chat_id] = time.time()
     markup = InlineKeyboardMarkup()
     markup.row_width = 3
     custom_keyboard = [InlineKeyboardButton('MDVR', callback_data='callback_mdvr'), InlineKeyboardButton('Software IVMS', callback_data='callback_ivms'),
@@ -276,6 +309,7 @@ def callback_veicular(call):
 def callback_mdvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_mdvr'
+    last_state[chat_id] = time.time()
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
     custom_keyboard = [InlineKeyboardButton('CL14GS', callback_data='callback_cl14'), InlineKeyboardButton('Plus', callback_data='callback_plus'), 
@@ -289,6 +323,7 @@ def callback_mdvr(call):
 def callback_cl14(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_cl14'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -305,6 +340,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_plus(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_plus'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -321,6 +357,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_max(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_max'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -337,6 +374,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_icalibration(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_icalibration'
+    last_state[chat_id] = time.time()
     msg=' [Clique aqui para fazer o download](https://drive.google.com/file/d/15HvPpvi7X-oQv4fXMHBm-eNPRypK1FVW/view?usp=sharing)\n\n\
 Caso não saiba como instalar um aplicativo com a extensão .apk [clique aqui](https://www.youtube.com/watch?v=b5D6zwkQKd4)'
     markup = InlineKeyboardMarkup()
@@ -349,6 +387,7 @@ Caso não saiba como instalar um aplicativo com a extensão .apk [clique aqui](h
 def callback_ivms(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_ivms'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 📲[Download App de Monitoramento](https://play.google.com/store/apps/details?id=com.icarvisions.iCarView&pcampaignid=web_share)\n\
 📁[Central de Downloads](https://www.clearcftv.com.br/downloads)\n\
@@ -366,6 +405,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_contador_pessoas(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_contador_pessoas'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -381,6 +421,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_cam_ahd(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_cam_ahd'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -395,6 +436,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_ipc_veicular')
 def callback_ipc_veicular(call):
     chat_id = call.message.chat.id
+    last_state[chat_id] = time.time()
     conversation_state[chat_id] = 'callback_ipc_veicular'
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -412,6 +454,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_cftv(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_cftv'
+    last_state[chat_id] = time.time()
     reply = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Reset de Senha', callback_data='callback_cpf'),
                       InlineKeyboardButton('Dúvidas Gerais', callback_data='callback_duvidas_gerais'),
@@ -425,6 +468,7 @@ def callback_cftv(call):
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_cpf')
 def callback_cpf(call):
     chat_id = call.message.chat.id
+    last_state[chat_id] = time.time()
     msg = 'Digite seu CPF (Apenas Números)'
     bot.send_message(chat_id, msg, parse_mode='Markdown')
     user_state[chat_id] = 'esperando_cpf'
@@ -433,6 +477,7 @@ def callback_cpf(call):
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_reset_de_senha')
 def callback_reset_de_senha(call):
     chat_id = call.message.chat.id
+    last_state[chat_id] = time.time()
     reply = InlineKeyboardMarkup()
     custom_keyboard = [InlineKeyboardButton('Reset por data', callback_data='callback_reset_data'),
                       InlineKeyboardButton('Reset por código key', callback_data='callback_reset_key')]
@@ -445,6 +490,7 @@ def callback_reset_de_senha(call):
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_reset_data')
 def callback_reset_data(call):
     chat_id = call.message.chat.id
+    last_state[chat_id] = time.time()
     conversation_state[chat_id] = 'callback_reset_data'
 
     # Verifique se o usuário já forneceu a data anteriormente
@@ -458,6 +504,7 @@ def callback_reset_data(call):
 @bot.callback_query_handler(func=lambda call: call.data == 'callback_reset_key')
 def callback_reset_key(call):
     chat_id = call.message.chat.id
+    last_state[chat_id] = time.time()
     conversation_state[chat_id]  = 'callback_reset_key'
 
     # Verifique se o usuário já forneceu a data anteriormente
@@ -471,6 +518,7 @@ def callback_reset_key(call):
 def callback_duvidas_gerais(call):
     
     chat_id = call.message.chat.id
+    last_state[chat_id] = time.time()
     conversation_state[chat_id] = 'callback_duvidas_gerais'
     msg = 'Agora, preciso saber de qual produto estamos falando.'
     markup = InlineKeyboardMarkup()
@@ -489,6 +537,7 @@ def callback_duvidas_gerais(call):
 def callback_duvida_dvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_duvida_dvr'
+    last_state[chat_id] = time.time()
     msg = 'Entendido! A Clear CFTV, possui mais de um modelo de DVR.'
     msg2 = 'Segue uma foto que vai te ajudar a você descobrir qual modelo é o seu:'
     msg3 = 'Escolha qual modelo é o seu. Se não encontrar, não se preocupe, você pode falar com nossos especialistas me enviando um /especialista a qualquer momento...'
@@ -508,6 +557,7 @@ def callback_duvida_dvr(call):
 def callback_dvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_dvr'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 📲[Download App Acesso Remoto](https://play.google.com/store/apps/details?id=com.mobile.myeye&pcampaignid=web_share)\n\
 🌐[Configuração Básica de Rede]()\n\n\
@@ -523,6 +573,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_hvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_hvr'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Adicionando um usuário](https://www.youtube.com/watch?v=zT2Y3gQq2Jk)\n\
 🎥[Acesso Remoto](https://www.youtube.com/watch?v=HxsZY7kpSUc)\n\
@@ -538,6 +589,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_xvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_xvr'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -555,6 +607,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_cam_analog(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_cam_analog'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -572,6 +625,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_nvr(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_nvr'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 🎥[Vídeo 1](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
 🎥[Vídeo 2](https://www.youtube.com/channel/UC3gHVQQ-SFIkprT1wxC_50w)\n\
@@ -588,6 +642,7 @@ Se não encontrou o que procura, fale com nosso /especialista'
 def callback_ipc_cftv(call):
     chat_id = call.message.chat.id
     conversation_state[chat_id] = 'callback_ipc_cftv'
+    last_state[chat_id] = time.time()
     msg = 'Aqui está algumas coisas que posso te ajudar:\n\
 💻[Software para encontrar câmera na rede (Opção 1)](https://drive.google.com/file/d/1T--VmNSxp3PYGYI3Ar-q4zleAvnQFLpj/view?usp=sharing)\n\n\
 Se não encontrou o que procura, fale com nosso /especialista'
@@ -604,40 +659,22 @@ def echo_message(message):
     if conversation_state.get(chat_id) is None:
         bot.reply_to(message, 'Digite /start para começar')
         conversation_state[chat_id] = "menu_start"
-
-        markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-        item1 = telebot.types.KeyboardButton("/start")
-        markup.row(item1)
-        bot.send_message(chat_id, reply_markup=markup)
-        
+        last_state[chat_id] = time.time()
 
     elif conversation_state.get(chat_id) is not None:
         # Não faça nada quando a conversa está em andamento
+        last_state[chat_id] = time.time()
         pass
     else:
         # Lidere com mensagens quando a conversa não está em andamento
         pass
 
-# Função para verificar a inatividade
-def check_inactivity(func=lambda message: user_state.get(message.chat.id) == 'inativo'):
-    while True:
-        time.sleep(300)
-        for chat_id, current_state in conversation_state.items():
-            if current_state:
-                if conversation_state.get(chat_id) == current_state:
-                    # O estado não mudou, considere o usuário como inativo
-                    logging.debug(f'Usuário {chat_id} inativo. Enviando comando /sair...')
-                    # Acione o comando /sair automaticamente
-                    user_state[chat_id] = 'inativo'
-                    bot.send_message(chat_id,'Como não houve mais interação, estou encerrando nosso atendimento. Se precisar, pode me chamar quantas vezes quiser! 👋')
-                    if chat_id in conversation_state:
-                        del conversation_state[chat_id]
-                    if chat_id in user_state:
-                        del user_state[chat_id]
-                    
-# Iniciar a verificação de inatividade em segundo plano
-threading.Thread(target=check_inactivity).start()        
 
+
+# Inicie a verificação de inatividade em segundo plano
+inatividade_thread = threading.Thread(target=verificar_inatividade)
+inatividade_thread.daemon = True
+inatividade_thread.start()
+
+# Inicie o bot
 bot.infinity_polling()
-
-
