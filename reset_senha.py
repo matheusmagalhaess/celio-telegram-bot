@@ -3,8 +3,8 @@ import requests, time
 
 def ResetXiongmaiDate(cod,tipo):
     senha = 'Super Password: Wait 5s and try it again'
+    cont = 0 # Tentativas de conseguir a senha
     while senha == 'Super Password: Wait 5s and try it again': # Loop para caso o servidor não responda com a senha, ele tente por até 3 vezes... 
-        cont = 0 # Tentativas de conseguir a senha
         url = 'https://cctvwiki.com/en/xiongmai-tech-password-reset/' # URL da API
         data = {'txtCode': cod} # Parâmetro que eu vou passar para fazer o "POST"
         response = requests.post(url, data=data) # Faço o POST na URL
@@ -34,7 +34,7 @@ def ResetXiongmaiDate(cod,tipo):
                     if senha != 'Super Password: Wait 5s and try it again':
                         break
             cont += 1
-            time.sleep(5)
+            time.sleep(1)
             if cont > 2:
                 senha = 'Lamento, mas o servidor de reset de senha está indisponível no momento... Aguarde alguns minutos e tente novamente...'
                 break
